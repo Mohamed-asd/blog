@@ -7,8 +7,9 @@
 	<title>{{ config('app.name') }}</title>
 </head>
 <body>
+	@include('elements.navbar')
 	<div class="container">
-		@include('elements.navbar')
+		@include('elements.flash')
 		@yield('content')
 	</div>
 	<script src="{{ asset('js/app.js') }}"></script>

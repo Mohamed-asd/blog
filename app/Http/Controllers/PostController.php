@@ -14,7 +14,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::orderBy('created_at', 'Desc')->paginate(1);
+        $posts = Post::orderBy('created_at', 'Desc')->paginate(3);
         return view('posts.index', compact('posts'));
     }
 
@@ -25,7 +25,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('posts.create');
     }
 
     /**
@@ -36,7 +36,15 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'bail|required|min:3',
+            'body'  => 'bail|required|min:5'
+        ]);
+        $post        = new Post();
+        $post->title = $request->title;
+        $post->body  = $request->body;
+        $post->save();
+        return redirect('/posts')->with('success', 'Post Created Successfully');
     }
 
     /**
