@@ -42,6 +42,7 @@ class PostController extends Controller
         ]);
         $post        = new Post();
         $post->title = $request->title;
+        $post->slug  = str_replace(' ', '-', strtolower($post->title));
         $post->body  = $request->body;
         $post->save();
         return redirect('/posts')->with('success', 'Post Created Successfully');
@@ -53,9 +54,10 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($slug)
     {
-        //
+        $post = Post::where('slug', $slug)->first();
+        return view('posts.show', compact('post'));
     }
 
     /**
@@ -64,9 +66,10 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($slug)
     {
-        //
+        $post = Post::where('slug', $slug)->first();
+        return view('posts.edit', compact('post'));
     }
 
     /**
@@ -76,9 +79,18 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $slug)
     {
-        //
+        $post = Post::where('slug', $slug)->first();
+        $request->validate([
+            'title' => 'bail|required|min:3',
+            'body'  => 'bail|required|min:5'
+        ]);
+        $post->title = $request->title;
+        $post->slug  = str_replace(' ', '-', strtolower($post->title));
+        $post->body  = $request->body;
+        $post->save();
+        return redirect('/posts/'. $post->slug)->with('success', 'Post Updated Successfully');
     }
 
     /**
@@ -87,8 +99,10 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($slug)
     {
-        //
+        $post = Post::where('slug', $slug)->first();
+        $post->delete();
+        return redirect('/posts')->with('error', 'Post Deleted Successfully');
     }
 }

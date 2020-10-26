@@ -2,6 +2,7 @@
 	<div class="container-fluid">
 		<a class="navbar-brand" href="/">Blog</a>
 		<ul class="nav navbar-nav">
+			<li><a href="/posts">Posts</a></li>
 			<li>
 				<a href="{{ route('PageAbout') }}">About Me</a>
 			</li>
