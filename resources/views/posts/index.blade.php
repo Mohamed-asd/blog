@@ -7,11 +7,16 @@
 	<div class="panel">
 		<div class="panel-heading">
 			<h3>
-				<a href="/posts/{{ $post->id }}">{{ $post->title }}</a>
+				<a href="/posts/{{ $post->slug }}">{{ $post->title }}</a>
 			</h3>
 		</div>
 		<div class="panel-body">
-			{{ $post->body }}
+			{!! str_limit($post->body, 300) !!}
+		</div>
+		<div class="panel-footer">
+			<span class="label label-primary">
+				<i class="fas fa-calendar"></i> {{ $post->created_at->format("Y-m-d") }}
+			</span>
 		</div>
 	</div>
 	@endforeach
