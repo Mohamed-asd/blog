@@ -2,11 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Post;
 
 class PostController extends Controller
 {
+        /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth', ['except' => ['index', 'show']]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -36,14 +46,17 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        $user          = Auth::user();
         $request->validate([
-            'title' => 'bail|required|min:3',
-            'body'  => 'bail|required|min:5'
+            'title'    => 'bail|required|min:3',
+            'body'     => 'bail|required|min:5'
         ]);
-        $post        = new Post();
-        $post->title = $request->title;
-        $post->slug  = str_replace(' ', '-', strtolower($post->title));
-        $post->body  = $request->body;
+        $post          = new Post();
+        $post->title   = $request->title;
+        $now           = date('h:i:s');
+        $post->slug    = str_replace(' ', '-', strtolower($post->title)).'-'.$now;
+        $post->body    = $request->body;
+        $post->user_id = $user->id;
         $post->save();
         return redirect('/posts')->with('success', 'Post Created Successfully');
     }
@@ -87,7 +100,8 @@ class PostController extends Controller
             'body'  => 'bail|required|min:5'
         ]);
         $post->title = $request->title;
-        $post->slug  = str_replace(' ', '-', strtolower($post->title));
+        $now         = date('h:i:s');
+        $post->slug  = str_replace(' ', '-', strtolower($post->title)).'-'.$now;
         $post->body  = $request->body;
         $post->save();
         return redirect('/posts/'. $post->slug)->with('success', 'Post Updated Successfully');
