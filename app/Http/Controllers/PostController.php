@@ -24,7 +24,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::orderBy('created_at', 'Desc')->paginate(3);
+        $posts = Post::orderBy('created_at', 'Desc')->paginate(5);
         return view('posts.index', compact('posts'));
     }
 
@@ -46,6 +46,7 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        // Current User
         $user          = Auth::user();
         $request->validate([
             'title'    => 'bail|required|min:3',
@@ -58,7 +59,7 @@ class PostController extends Controller
         $post->body    = $request->body;
         $post->user_id = $user->id;
         $post->save();
-        return redirect('/posts')->with('success', 'Post Created Successfully');
+        return redirect('/home')->with('success', 'Post Created Successfully');
     }
 
     /**
@@ -104,7 +105,7 @@ class PostController extends Controller
         $post->slug  = str_replace(' ', '-', strtolower($post->title)).'-'.$now;
         $post->body  = $request->body;
         $post->save();
-        return redirect('/posts/'. $post->slug)->with('success', 'Post Updated Successfully');
+        return redirect('/home')->with('success', 'Post Updated Successfully');
     }
 
     /**
@@ -117,6 +118,6 @@ class PostController extends Controller
     {
         $post = Post::where('slug', $slug)->first();
         $post->delete();
-        return redirect('/posts')->with('error', 'Post Deleted Successfully');
+        return redirect('/home')->with('error', 'Post Deleted Successfully');
     }
 }
